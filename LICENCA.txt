@@ -1,0 +1,14 @@
+EBA Cuiabá Sul 2026 — Portal de inscrições e credenciais
+© 2026 WeCare Consultoria. Todos os direitos reservados.
+
+Este pacote é fornecido exclusivamente para HOSPEDAR o portal do evento EBA Cuiabá Sul 2026,
+dos Bodes do Asfalto — Subsede Cuiabá Sul.
+
+É proibido modificar, descompilar, copiar, redistribuir ou reutilizar este software, no todo ou em parte,
+sem autorização por escrito da WeCare Consultoria. Os arquivos são verificados automaticamente: qualquer
+alteração bloqueia o funcionamento do portal.
+
+A gestão do portal, o acesso ao painel e os dados das inscrições permanecem sob responsabilidade
+da WeCare Consultoria e da organização do evento.
+
+Contato: contato@wecareconsultoria.com.br — https://wecareconsultoria.com.br

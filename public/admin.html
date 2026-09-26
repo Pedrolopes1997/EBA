@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Painel EBA Cuiabá Sul</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+/* ================= Base do painel ================= */
+.admin{max-width:1360px;margin:auto;padding:36px 32px 60px}
+.admin,.admin button,.admin input,.admin select,.modal,.modal button,.checkin-box,.checkin-box button,.checkin-box input{font-family:Oswald,Arial,sans-serif}
+.admin h1{font-family:Anton,sans-serif;font-size:44px;letter-spacing:.5px;margin:4px 0 22px;line-height:1}
+.admin h1 em{font-style:normal;color:var(--red)}
+.admin input,.admin select{background:#0b0b0b;color:#f3ecd9;border:1px solid #333;padding:0 14px;height:44px;font-size:15px;border-radius:0}
+.admin input:focus,.admin select:focus{border-color:var(--red);outline:none}
+.admin select{cursor:pointer}
+.admin .btn{clip-path:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 20px;font-size:14px;white-space:nowrap}
+.btn-line{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:44px;padding:0 18px;background:transparent;border:1px solid #3a3a3a;color:#e8dfc9;font:600 13px Oswald,Arial,sans-serif;letter-spacing:1.2px;text-transform:uppercase;cursor:pointer;white-space:nowrap;text-decoration:none}
+.btn-line:hover{border-color:var(--cream);color:#fff;background:#151515}
+.btn-line.sm{height:32px;padding:0 12px;font-size:12px}
+
+/* ================= Edição / exclusão ================= */
+.modal-wide{max-width:640px;text-align:left;max-height:92vh;overflow:auto}
+.modal-wide h3{text-align:center}
+.edit-ref{text-align:center;color:#777!important;font-size:12px;margin:-6px 0 16px!important}
+.edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.edit-grid label{display:flex;flex-direction:column;gap:5px;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#8a8a8a}
+.edit-grid input,.edit-grid select{height:42px;background:#0b0b0b;color:#f3ecd9;border:1px solid #333;padding:0 12px;font:500 15px Oswald,Arial,sans-serif;text-transform:none;letter-spacing:0}
+.edit-grid input:focus,.edit-grid select:focus{border-color:var(--red);outline:none}
+.edit-grid input:disabled{color:#777}
+.edit-sub{margin:20px 0 10px;font-size:12px;letter-spacing:1.5px;color:#8a8a8a;font-weight:600}
+.edit-hint{font-size:12px!important;color:#777!important;margin:14px 0 0!important}
+.edit-err{color:#ff8080!important;margin:10px 0!important;min-height:1em}
+.btn-danger{background:#b91c1c!important}.btn-danger:hover{background:#dc2626!important}
+.row-actions{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.row-actions .danger{color:#f87171}
+.person{flex-wrap:wrap}
+.person .in{flex-basis:100%;padding-left:72px;color:#4ade80;font-size:12px;margin-top:-2px}
+
+/* ================= Portaria: busca e seleção de quem entra ================= */
+.ck-search{margin:12px 0 4px}
+.ck-search input{width:100%;box-sizing:border-box;background:#0c0c0c;color:#fff;border:1px solid #333;height:46px;padding:0 12px;font-size:15px}
+.ck-search input:focus{border-color:var(--red);outline:none}
+.ck-hit{display:block;width:100%;text-align:left;background:#101010;border:1px solid #262626;color:#e9e1cf;padding:12px 14px;margin-top:6px;cursor:pointer;font:500 15px Oswald,Arial,sans-serif}
+.ck-hit:hover{border-color:var(--cream)}
+.ck-hit small{display:block;color:#8a8a8a;font-size:12px;margin-top:2px}
+.ck-hit .st{float:right;font-size:11px;letter-spacing:1px;text-transform:uppercase}
+.ck-list{text-align:left;margin:4px 0 14px;background:#0005}
+.ck-person{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid #ffffff14;cursor:pointer;font-size:16px}
+.ck-person:last-child{border-bottom:0}
+.ck-person input{width:22px;height:22px;accent-color:#22c55e;flex:0 0 auto}
+.ck-person .ptype{min-width:0}
+.ck-person.done{opacity:.55;cursor:default}
+.ck-person{flex-wrap:wrap}
+.ck-person .done-txt{flex-basis:100%;padding-left:34px;font-size:12px;color:#fbbf24;margin-top:-6px}
+.ck-person.scanned{background:#ffffff10}
+.ck-due{background:#2a1f05;border:1px solid #92400e;color:#fde68a;padding:12px;margin-bottom:14px;font-size:15px}
+.ck-due b{color:#fbbf24;font-size:20px}
+.hidden{display:none!important}
+
+/* ================= Login / senha ================= */
+.login-box{max-width:420px;margin:60px auto;background:#111;border:1px solid #2a2a2a;border-top:4px solid var(--red);padding:34px 30px;text-align:center}
+.login-box h2{font-family:Anton,sans-serif;font-size:34px;margin:0 0 20px;letter-spacing:.5px}
+.login-box input{width:100%;box-sizing:border-box;margin-bottom:12px;height:50px}
+.login-box .btn{width:100%;height:50px}
+#loginErr,#pwErr{color:#ff8080;font-size:14px;margin:10px 0 0;min-height:1em}
+.pw-intro{color:#bbb;font-size:14px;line-height:1.5;margin:-8px 0 16px}
+.pw-cancel{width:100%;margin-top:10px}
+
+/* ================= Barra do usuário + abas ================= */
+.user-bar{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap;margin:0 0 26px;border-bottom:1px solid #262626}
+.admin .tabs{display:flex;gap:4px;margin:0}
+.tab{background:none;border:0;border-bottom:3px solid transparent;color:#8d8d8d;padding:12px 18px;cursor:pointer;font:600 15px Oswald,Arial,sans-serif;letter-spacing:1.5px}
+.tab:hover{color:#ddd}
+.tab.active{color:#fff;border-bottom-color:var(--red)}
+.who{color:#ccc;font-size:14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding-bottom:12px}
+.role-badge{font-size:11px;letter-spacing:1.5px;padding:3px 8px;background:#1b1b1b;border:1px solid #3a3a3a;color:#f3df9a;text-transform:uppercase}
+.link-btn{background:none;border:0;color:#d9c98f;text-decoration:underline;text-underline-offset:3px;cursor:pointer;font:500 13px Oswald,Arial,sans-serif;padding:0}
+.link-btn:hover{color:#fff}
+.link-btn:disabled{color:#777;text-decoration:none}
+
+/* ================= Estatísticas ================= */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
+.stat-card{background:#101010;border:1px solid #242424;border-left:3px solid var(--red);padding:18px 20px}
+.stat-card small{display:block;color:#8a8a8a;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
+.stat-card b{display:block;font-family:Anton,sans-serif;font-size:34px;font-weight:400;color:#f3df9a;line-height:1.1}
+.stat-card span{display:block;font-size:12px;color:#777;margin-top:4px}
+.breakdown{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:26px}
+.breakdown-box{background:#0d0d0d;border:1px solid #222;padding:16px 20px}
+.breakdown-box h4{margin:0 0 8px;font-size:12px;letter-spacing:1.5px;color:#8a8a8a;text-transform:uppercase;font-weight:600}
+.breakdown-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #1a1a1a;font-size:15px}
+.breakdown-row:last-child{border-bottom:none}
+.breakdown-row b{color:#f3df9a}
+
+/* ================= Filtros ================= */
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.toolbar #search{flex:1 1 260px;min-width:0}
+.toolbar-actions{display:flex;gap:10px;margin-left:auto}
+
+/* ================= Tabela de inscrições ================= */
+.panelbox{background:#0d0d0d;border:1px solid #232323}
+.atable{width:100%;border-collapse:collapse}
+.atable th{padding:12px 16px;border-bottom:1px solid #2a2a2a;text-align:left;font-size:12px;font-weight:600;letter-spacing:1.5px;color:#8a8a8a;text-transform:uppercase;white-space:nowrap;background:#111}
+.atable td{padding:16px;border-bottom:1px solid #1c1c1c;vertical-align:top;font-size:15px;color:#e9e1cf}
+.atable tbody tr:last-child td{border-bottom:none}
+.atable tbody tr:hover td{background:#131313}
+.atable tr.st-Cancelado td{opacity:.6}
+.c-who{width:26%}
+.who-name{font-size:17px;font-weight:600;color:#fff;line-height:1.25}
+.who-meta{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin:6px 0 8px;font-size:12px;color:#7a7a7a}
+.sub-tag{font-size:11px;letter-spacing:1px;color:#d9c98f;border:1px solid #3d3322;padding:1px 7px;text-transform:uppercase}
+.who-contact{font-size:14px;color:#bdb5a4;line-height:1.5}
+.who-contact .mail{color:#8a8a8a;word-break:break-all}
+.mail-status{margin-top:4px;font-size:12px;display:flex;gap:8px;align-items:center}
+.ok-txt{color:#4ade80}.warn-txt{color:#fbbf24}.bad-txt{color:#f87171}
+.c-people{width:30%}
+.person{display:flex;align-items:baseline;gap:8px;padding:3px 0;font-size:15px}
+.ptype{flex:0 0 auto;min-width:64px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 6px;border:1px solid #333;color:#aaa;text-align:center}
+.ptype-irmao{border-color:#7f1d1d;color:#fca5a5}
+.ptype-cunhada{border-color:#6b21a8;color:#d8b4fe}
+.ptype-crianca{border-color:#1e40af;color:#93c5fd}
+.people-count{display:block;margin-top:6px;font-size:12px;color:#777}
+.c-pay .amount{display:block;font-size:17px;font-weight:600;color:#f3df9a;margin-bottom:6px}
+.pay-line{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px;color:#9a9a9a}
+.pay-line a{color:#d9c98f;white-space:nowrap}
+.badge{display:inline-block;padding:3px 9px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:1px solid}
+.badge-online{background:#0b2530;color:#67e8f9;border-color:#155e75}
+.badge-presencial{background:#1a1a2e;color:#a5b4fc;border-color:#3730a3}
+.status-select{width:140px;height:38px!important;padding:0 10px!important;font-weight:600;letter-spacing:.5px}
+.status-select.s-Pago{border-color:#166534;color:#4ade80;background:#0b1f12}
+.status-select.s-Pendente{border-color:#92400e;color:#fbbf24;background:#1f1705}
+.status-select.s-Cancelado{border-color:#7f1d1d;color:#f87171;background:#1f0b0b}
+.by{display:block;color:#6f6f6f;font-size:12px;margin-top:6px;line-height:1.4}
+.entry-ok{color:#4ade80;font-weight:600}
+.entry-wait{color:#6f6f6f}
+.c-qr{text-align:right;width:1%}
+
+/* ================= Modais ================= */
+.modal-overlay{position:fixed;inset:0;background:#000b;display:flex;align-items:center;justify-content:center;z-index:100;padding:16px}
+.modal{background:#111;border:1px solid #3a3a3a;border-top:4px solid var(--red);padding:30px;max-width:460px;width:100%;text-align:center}
+.modal h3{font-family:Anton,sans-serif;font-size:28px;margin:0 0 12px;letter-spacing:.5px}
+.modal p{color:#aaa;margin:0 0 22px;line-height:1.6}
+.modal-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.modal-actions .btn{clip-path:none;height:44px;padding:0 22px}
+.modal-actions .ghost{height:44px;padding:0 22px;cursor:pointer;background:none;border:1px solid #444;color:#ccc;font:600 13px Oswald,Arial,sans-serif;letter-spacing:1.2px}
+.modal-actions .ghost:hover{border-color:#fff;color:#fff}
+.qr-img{display:block;margin:16px auto 20px;border:8px solid #fff;background:#fff}
+.temp-pw{font:700 26px monospace;letter-spacing:2px;color:#f3df9a;background:#000;border:1px dashed #555;padding:14px;margin:10px 0 14px;user-select:all;word-break:break-all}
+
+/* ================= Check-in ================= */
+.checkin-overlay{position:fixed;inset:0;background:#050505;z-index:150;overflow:auto}
+.checkin-box{max-width:520px;margin:0 auto;padding:18px 16px 40px}
+.checkin-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.checkin-head h3{font-family:Anton,sans-serif;font-size:30px;margin:0}
+.checkin-head .ghost{background:none;border:1px solid #444;color:#ddd;height:40px;padding:0 14px;cursor:pointer;font:600 13px Oswald,Arial,sans-serif;letter-spacing:1px}
+#qrReader{width:100%;background:#000;border:1px solid #333;min-height:200px}
+#qrReader video{width:100%!important}
+.checkin-hint{color:#999;text-align:center;font-size:14px}
+.manual-form{display:flex;gap:8px;margin-top:10px}
+.manual-form input{flex:1;min-width:0;background:#0c0c0c;color:#fff;border:1px solid #333;height:46px;padding:0 12px;font-size:14px}
+.manual-form .btn{clip-path:none;height:46px}
+.ck-result{border:2px solid;padding:22px;text-align:center}
+.ck-result .ck-ico{font-size:60px;line-height:1}
+.ck-result h4{font-family:Anton,sans-serif;font-size:32px;margin:8px 0 4px;letter-spacing:.5px}
+.ck-result .ck-sub{font-size:15px;margin:0 0 16px;opacity:.9}
+.ck-ok{background:#0d2b18;border-color:#22c55e;color:#dcfce7}.ck-ok h4{color:#4ade80}
+.ck-warn{background:#2a1f05;border-color:#f59e0b;color:#fef3c7}.ck-warn h4{color:#fbbf24}
+.ck-bad{background:#2d0e0e;border-color:#ef4444;color:#fee2e2}.ck-bad h4{color:#f87171}
+.ck-info{background:#0004;text-align:left;padding:14px;margin-bottom:16px}
+.ck-info p{margin:4px 0;font-size:16px}.ck-info small{color:#aaa}
+.ck-people{margin:8px 0}.ck-people .person{font-size:16px}
+.ck-actions{display:flex;flex-direction:column;gap:10px}
+.ck-actions .btn{clip-path:none;padding:16px;font-size:17px}
+.ck-actions .ghost{background:none;border:1px solid #555;color:#ddd;padding:14px;cursor:pointer;font:600 15px Oswald,Arial,sans-serif;letter-spacing:1px}
+
+/* ================= Portaria ================= */
+.portaria{max-width:520px;margin:30px auto;text-align:center;background:#111;border:1px solid #2a2a2a;border-top:4px solid var(--red);padding:36px 24px}
+.portaria h2{font-family:Anton,sans-serif;font-size:40px;margin:0 0 8px}
+.portaria p{color:#aaa;margin:0 0 24px}
+.portaria .btn{clip-path:none;width:100%;height:auto;padding:22px;font-size:19px}
+
+/* ================= Usuários ================= */
+.new-user{background:#0d0d0d;border:1px solid #232323;padding:18px 20px;margin-bottom:18px}
+.new-user h4{margin:0 0 12px;font-size:12px;letter-spacing:1.5px;color:#8a8a8a;font-weight:600}
+.new-user-grid{display:grid;grid-template-columns:1.2fr 1.4fr 1.2fr auto;gap:10px}
+.new-user .hint{color:#6f6f6f;font-size:12px;margin:10px 0 0}
+.user-role{height:36px!important;padding:0 8px!important;font-size:14px!important}
+.u-actions{display:flex;gap:14px;flex-wrap:wrap}
+
+/* ================= Tablet ================= */
+@media(max-width:1100px){
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .toolbar-actions{margin-left:0}
+}
+
+/* ================= Celular: tabelas viram cartões ================= */
+@media(max-width:860px){
+  .admin{padding:22px 14px 50px}
+  .admin h1{font-size:34px;margin-bottom:16px}
+  .user-bar{align-items:stretch;flex-direction:column-reverse;gap:6px;border-bottom:0;margin-bottom:18px}
+  .who{padding-bottom:0;font-size:13px}
+  .admin .tabs{border-bottom:1px solid #262626}
+  .tab{flex:1;padding:12px 8px}
+  .stats-grid{gap:10px;margin-bottom:10px}
+  .stat-card{padding:14px}
+  .stat-card b{font-size:26px}
+  .stat-card small{font-size:11px}
+  .breakdown{grid-template-columns:1fr;gap:10px;margin-bottom:18px}
+  .toolbar{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .toolbar #search{grid-column:1/-1}
+  .toolbar #refresh{grid-column:1/-1}
+  .toolbar-actions{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .toolbar-actions #checkinBtn,.toolbar-actions #exportBtn{grid-column:1/-1}
+  .toolbar-actions #checkinBtn{height:52px;font-size:15px}
+  .panelbox{background:none;border:0}
+  .atable,.atable tbody{display:block}
+  .atable thead{display:none}
+  .atable tbody tr{display:grid;grid-template-columns:1fr 1fr;gap:0;background:#101010;border:1px solid #262626;border-left:3px solid #3a3a3a;margin-bottom:12px}
+  .atable tbody tr.st-Pago{border-left-color:#22c55e}
+  .atable tbody tr.st-Pendente{border-left-color:#f59e0b}
+  .atable tbody tr.st-Cancelado{border-left-color:#ef4444}
+  .atable td{display:block;width:auto!important;padding:12px 14px;border-bottom:1px solid #1d1d1d}
+  .atable tbody tr:hover td{background:none}
+  .atable td[data-label]:before{content:attr(data-label);display:block;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#777;margin-bottom:6px;font-weight:600}
+  .atable td.c-who,.atable td.c-people,.atable td.c-full{grid-column:1/-1}
+  .c-qr{text-align:left}
+  .row-actions{flex-direction:row;flex-wrap:wrap;align-items:center;gap:14px}
+  .status-select{width:100%}
+  .new-user-grid{grid-template-columns:1fr}
+  .new-user-grid .btn{width:100%}
+  .login-box{margin:30px auto;padding:28px 20px}
+}
+</style>
+</head>
+<body>
+<main class="admin">
+  <p class="eyebrow">BODES DO ASFALTO • CUIABÁ SUL</p>
+  <h1>PAINEL <em>EBA 2026</em></h1>
+
+  <!-- Login -->
+  <form id="loginSection" class="login-box hidden" novalidate>
+    <h2>ACESSO</h2>
+    <input id="loginEmail" type="email" placeholder="Seu e-mail" autocomplete="username" required>
+    <input id="password" type="password" placeholder="Sua senha" autocomplete="current-password" required>
+    <button id="loginBtn" class="btn" type="submit" style="width:100%">ENTRAR</button>
+    <p id="loginErr"></p>
+  </form>
+
+  <!-- Troca de senha (obrigatória no 1º acesso ou voluntária) -->
+  <form id="pwSection" class="login-box hidden" novalidate>
+    <h2>NOVA SENHA</h2>
+    <p id="pwIntro" class="pw-intro"></p>
+    <input id="pwCurrent" type="password" placeholder="Senha atual (ou temporária)" autocomplete="current-password" required>
+    <input id="pwNew" type="password" placeholder="Nova senha (mín. 10 caracteres)" autocomplete="new-password" required>
+    <input id="pwConfirm" type="password" placeholder="Repita a nova senha" autocomplete="new-password" required>
+    <button class="btn" type="submit" style="width:100%">SALVAR NOVA SENHA</button>
+    <button class="btn-line pw-cancel" type="button" id="pwCancel">Cancelar</button>
+    <p id="pwErr"></p>
+  </form>
+
+  <!-- Barra do usuário logado -->
+  <div id="userBar" class="user-bar hidden">
+    <nav class="tabs" id="tabs">
+      <button class="tab active" data-tab="panel">INSCRIÇÕES</button>
+      <button class="tab" data-tab="usersSection">USUÁRIOS</button>
+    </nav>
+    <div class="who">
+      <span id="whoName"></span> <span class="role-badge" id="whoRole"></span>
+      <button class="link-btn" id="changePwBtn">alterar senha</button>
+      <button class="link-btn" id="logoutBtn">sair</button>
+    </div>
+  </div>
+
+  <!-- Portaria -->
+  <section id="portariaSection" class="portaria hidden">
+    <h2>PORTARIA</h2>
+    <p>Leia o QR Code da credencial de cada pessoa na entrada.</p>
+    <button class="btn" id="portariaScanBtn">📷 ABRIR LEITOR DE QR CODE</button>
+  </section>
+
+  <!-- Usuários (admin) -->
+  <section id="usersSection" class="hidden">
+    <form id="newUserForm" class="new-user" novalidate>
+      <h4>NOVO USUÁRIO</h4>
+      <div class="new-user-grid">
+        <input id="nuName" placeholder="Nome" required>
+        <input id="nuEmail" type="email" placeholder="E-mail" required>
+        <select id="nuRole">
+          <option value="portaria">Portaria (só check-in)</option>
+          <option value="admin">Admin (acesso total)</option>
+        </select>
+        <button class="btn" type="submit">Criar usuário</button>
+      </div>
+      <p class="hint">Uma senha temporária será gerada. A pessoa troca no primeiro acesso.</p>
+    </form>
+    <div class="panelbox">
+      <div class="tablewrap">
+        <table class="atable">
+          <thead><tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Situação</th><th>Último acesso</th><th>Ações</th></tr></thead>
+          <tbody id="userRows"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Painel -->
+  <section id="panel" class="hidden">
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <small>Inscrições ativas</small>
+        <b id="sRegs">0</b>
+        <span id="sRegsSub"></span>
+      </div>
+      <div class="stat-card">
+        <small>Confirmadas (pago)</small>
+        <b id="sPaid">0</b>
+        <span id="sPaidPct"></span>
+      </div>
+      <div class="stat-card">
+        <small>Pessoas confirmadas</small>
+        <b id="sTickets">0</b>
+        <span id="sEntered"></span>
+      </div>
+      <div class="stat-card">
+        <small>Receita confirmada</small>
+        <b id="sRevenue">R$ 0</b>
+      </div>
+    </div>
+
+    <!-- Breakdown por tipo e subsede -->
+    <div class="breakdown">
+      <div class="breakdown-box">
+        <h4>Pessoas confirmadas por tipo</h4>
+        <div id="bTickets"></div>
+      </div>
+      <div class="breakdown-box">
+        <h4>Inscrições por subsede</h4>
+        <div id="bSubsede"></div>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <input id="search" placeholder="Buscar por nome, acompanhante, celular, e-mail ou subsede…">
+      <select id="filter">
+        <option value="">Todos os status</option>
+        <option>Pago</option>
+        <option>Pendente</option>
+        <option>Cancelado</option>
+      </select>
+      <select id="filterPayment">
+        <option value="">Todas as formas</option>
+        <option value="Online">Online</option>
+        <option value="Presencial">Presencial</option>
+      </select>
+      <button class="btn-line" id="refresh" type="button">↻ Atualizar</button>
+      <div class="toolbar-actions">
+        <button class="btn" id="checkinBtn" type="button">📷 Check-in na portaria</button>
+        <a class="btn-line" id="printListBtn" href="/admin/lista-portaria" target="_blank" rel="noopener">🖨 Lista da portaria</a>
+        <a class="btn-line" id="exportBtn" href="#">⬇ Exportar CSV</a>
+      </div>
+    </div>
+
+    <!-- Tabela -->
+    <div class="panelbox">
+      <div class="tablewrap">
+        <table class="atable">
+          <thead>
+            <tr>
+              <th>Inscrição</th>
+              <th>Quem vai</th>
+              <th>Pagamento</th>
+              <th>Status</th>
+              <th>Entrada</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </section>
+</main>
+<footer class="site-footer">
+  <div class="sf-dev">
+    <span>Desenvolvido por <b>WeCare Consultoria</b> • © 2026 Todos os direitos reservados</span>
+    <a class="sf-btn" href="https://wecareconsultoria.com.br" target="_blank" rel="noopener">wecareconsultoria.com.br ↗</a>
+  </div>
+  <a class="sf-privacy" href="/privacidade">Política de privacidade</a>
+</footer>
+
+<!-- Modal confirmação de status (Admin #8) -->
+<div class="modal-overlay hidden" id="confirmModal">
+  <div class="modal">
+    <h3 id="confirmTitle">CONFIRMAR</h3>
+    <p id="confirmMsg"></p>
+    <div class="modal-actions">
+      <button class="ghost" id="confirmCancel">CANCELAR</button>
+      <button class="btn" id="confirmOk">CONFIRMAR</button>
+    </div>
+  </div>
+</div>
+
+<!-- Editar inscrição -->
+<div class="modal-overlay hidden" id="editModal">
+  <form class="modal modal-wide" id="editForm" novalidate>
+    <h3>EDITAR INSCRIÇÃO</h3>
+    <p class="edit-ref" id="editRef"></p>
+    <div class="edit-grid">
+      <label>Titular (comprador)<input id="edName" required maxlength="100"></label>
+      <label>Celular<input id="edPhone" required></label>
+      <label>E-mail<input id="edEmail" type="email"></label>
+      <label>Subsede<select id="edAff"></select></label>
+    </div>
+    <h4 class="edit-sub">QUEM VAI</h4>
+    <div class="edit-grid" id="edPeople"></div>
+    <p class="edit-hint">Ingressos e valores não mudam aqui. Depois de corrigir nomes, use “reenviar” para mandar o e-mail atualizado.</p>
+    <p class="edit-err" id="editErr"></p>
+    <div class="modal-actions">
+      <button class="ghost" type="button" id="editCancel">CANCELAR</button>
+      <button class="btn" type="submit">SALVAR ALTERAÇÕES</button>
+    </div>
+  </form>
+</div>
+
+<!-- Excluir inscrição (só super admin) -->
+<div class="modal-overlay hidden" id="deleteModal">
+  <div class="modal">
+    <h3 style="color:#f87171">EXCLUIR DE VEZ</h3>
+    <p id="deleteMsg"></p>
+    <p style="font-size:13px">Diferente de “Cancelar”, isto <b>apaga a inscrição do sistema</b>. Uma cópia de segurança é guardada no servidor antes.</p>
+    <div class="modal-actions">
+      <button class="ghost" id="deleteCancel">CANCELAR</button>
+      <button class="btn btn-danger" id="deleteOk">EXCLUIR</button>
+    </div>
+  </div>
+</div>
+
+<!-- Senha temporária (mostrada uma única vez) -->
+<div class="modal-overlay hidden" id="tempPwModal">
+  <div class="modal">
+    <h3>SENHA TEMPORÁRIA</h3>
+    <p id="tempPwWho"></p>
+    <div class="temp-pw" id="tempPwValue"></div>
+    <p style="font-size:13px">Anote ou copie agora: ela <b>não aparece de novo</b>. No primeiro acesso a pessoa cria a própria senha.</p>
+    <div class="modal-actions">
+      <button class="ghost" id="tempPwCopy">COPIAR</button>
+      <button class="btn" id="tempPwClose">OK, ANOTEI</button>
+    </div>
+  </div>
+</div>
+
+<!-- Check-in na portaria -->
+<div class="checkin-overlay hidden" id="checkinModal">
+  <div class="checkin-box">
+    <div class="checkin-head">
+      <h3>CHECK-IN</h3>
+      <button class="ghost" id="checkinClose">FECHAR ✕</button>
+    </div>
+    <div id="checkinScan">
+      <div id="qrReader"></div>
+      <p class="checkin-hint" id="cameraMsg">Aponte a câmera para o QR Code da credencial.</p>
+      <div class="ck-search">
+        <input id="ckSearch" placeholder="Sem QR? Busque por nome ou celular" autocomplete="off">
+        <div id="ckResults"></div>
+      </div>
+      <form id="manualForm" class="manual-form">
+        <input id="manualCode" placeholder="Ou cole o link / código da credencial" autocomplete="off">
+        <button class="btn mini" type="submit">VALIDAR</button>
+      </form>
+    </div>
+    <div id="checkinResult" class="hidden"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js" defer></script>
+<script src="admin.js"></script>
+</body>
+</html>
