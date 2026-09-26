@@ -16,12 +16,14 @@ Este é um **pacote pronto**. Você só precisa colocá-lo no servidor e preench
 
 ## 2. Colocar o pacote no servidor
 
-Envie o `.zip` para o servidor e descompacte:
+Baixe direto do GitHub (ou, se recebeu um `.zip`, descompacte-o com `unzip`):
 
 ```bash
-unzip eba-cuiaba-sul-pacote-*.zip
+git clone https://github.com/Pedrolopes1997/EBA.git eba-cuiaba-sul
 cd eba-cuiaba-sul
 ```
+
+Versão nova do pacote: `git pull` dentro da pasta e reinicie o serviço.
 
 Não precisa rodar `npm install`: tudo já vem dentro do pacote.
 
