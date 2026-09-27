@@ -190,6 +190,54 @@
 .user-role{height:36px!important;padding:0 8px!important;font-size:14px!important}
 .u-actions{display:flex;gap:14px;flex-wrap:wrap}
 
+/* ================= Editor do site ================= */
+#siteSection{max-width:980px}
+.se-bar{position:sticky;top:0;z-index:40;background:#080808f2;backdrop-filter:blur(8px);border-bottom:1px solid #262626;padding:12px 0;margin-bottom:10px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.se-status{font-size:13px;color:#9a9a9a;line-height:1.5}
+.se-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.se-actions select{height:44px}
+.se-intro{color:#9a9a9a;font-size:14px;line-height:1.6;margin:6px 0 16px}
+.se-loading{color:#888;padding:30px 0}
+.se-sec{background:#0d0d0d;border:1px solid #232323;margin-bottom:10px}
+.se-sec>summary{cursor:pointer;padding:16px 20px;font:600 17px Oswald,Arial,sans-serif;letter-spacing:1.5px;text-transform:uppercase;color:#f3df9a;list-style:none}
+.se-sec>summary::-webkit-details-marker{display:none}
+.se-sec>summary:before{content:"▸";display:inline-block;width:20px;color:var(--red);transition:transform .15s}
+.se-sec[open]>summary:before{transform:rotate(90deg)}
+.se-sec>.se-grid{padding:0 20px 20px}
+.se-sec-help{color:#8a8a8a;font-size:13px;margin:-6px 20px 14px;line-height:1.5}
+.se-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px}
+.se-field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.se-field>label{font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#a8a8a8;display:flex;justify-content:space-between;gap:8px}
+.se-count{color:#555;font-size:11px;letter-spacing:0}
+.admin .se-field input,.admin .se-field textarea{width:100%;box-sizing:border-box;background:#0b0b0b;color:#f3ecd9;border:1px solid #333;padding:10px 12px;font:500 15px Oswald,Arial,sans-serif;height:auto}
+.admin .se-field textarea{resize:vertical;line-height:1.45}
+.se-field input:focus,.se-field textarea:focus{border-color:var(--red);outline:none}
+.se-help{color:#6f6f6f;font-size:12px;line-height:1.4}
+.se-list,.se-image,.se-field:has(.se-strings){grid-column:1/-1}
+.se-toggle{grid-column:1/-1}
+.se-field.se-toggle>label{justify-content:flex-start}
+.se-toggle label{display:flex;align-items:center;gap:10px;cursor:pointer;font-size:15px;text-transform:none;letter-spacing:0;color:#e9e1cf}
+.admin .se-toggle input{width:20px;height:20px;accent-color:#22c55e;padding:0}
+.se-money>div{display:flex;align-items:center;gap:8px}.se-money span{color:#888}
+.se-img-row{display:flex;gap:16px;align-items:center}
+.se-img-row img{width:120px;height:120px;object-fit:contain;background:#151515;border:1px solid #2a2a2a}
+.se-img-row>div{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.se-upload{position:relative;overflow:hidden}.se-upload input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.se-item{border:1px solid #262626;background:#101010;padding:14px;margin-bottom:10px}
+.se-item .se-item{background:#0b0b0b}
+.se-item-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;font-size:15px;color:#fff}
+.se-item-actions{margin-left:auto;display:flex;gap:4px}
+.se-badge{font-size:11px;letter-spacing:1px;text-transform:uppercase;border:1px solid #3d3322;color:#d9c98f;padding:1px 7px}
+.se-badge.off{border-color:#7f1d1d;color:#f87171}
+.se-ico{width:32px;height:32px;background:#151515;border:1px solid #333;color:#ddd;cursor:pointer;font-size:14px}
+.se-ico:hover:not(:disabled){border-color:var(--cream)}.se-ico:disabled{opacity:.3;cursor:default}
+.se-ico.del:hover:not(:disabled){border-color:#ef4444;color:#f87171}
+.se-strings{display:flex;flex-direction:column;gap:6px}
+.se-str{display:flex;gap:4px}.se-str input{flex:1}
+.se-err{color:#ff8080;font-size:15px;min-height:1em}
+.u-site{display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px}
+.u-site input{width:18px;height:18px;accent-color:#22c55e}
+
 /* ================= Tablet ================= */
 @media(max-width:1100px){
   .stats-grid{grid-template-columns:repeat(2,1fr)}
@@ -232,6 +280,12 @@
   .new-user-grid{grid-template-columns:1fr}
   .new-user-grid .btn{width:100%}
   .login-box{margin:30px auto;padding:28px 20px}
+  .se-grid{grid-template-columns:1fr}
+  .se-bar{position:static}
+  .se-actions{display:grid;grid-template-columns:1fr 1fr;width:100%}
+  .se-actions .btn,.se-actions select{grid-column:1/-1}
+  .se-sec>.se-grid{padding:0 12px 14px}
+  .se-item{padding:10px}
 }
 </style>
 </head>
@@ -265,7 +319,9 @@
   <div id="userBar" class="user-bar hidden">
     <nav class="tabs" id="tabs">
       <button class="tab active" data-tab="panel">INSCRIÇÕES</button>
+      <button class="tab" data-tab="portariaSection">PORTARIA</button>
       <button class="tab" data-tab="usersSection">USUÁRIOS</button>
+      <button class="tab" data-tab="siteSection">SITE</button>
     </nav>
     <div class="who">
       <span id="whoName"></span> <span class="role-badge" id="whoRole"></span>
@@ -299,12 +355,15 @@
     <div class="panelbox">
       <div class="tablewrap">
         <table class="atable">
-          <thead><tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Situação</th><th>Último acesso</th><th>Ações</th></tr></thead>
+          <thead><tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th id="thSite">Edita o site</th><th>Situação</th><th>Último acesso</th><th>Ações</th></tr></thead>
           <tbody id="userRows"></tbody>
         </table>
       </div>
     </div>
   </section>
+
+  <!-- Editor do site (quem tem permissão) -->
+  <section id="siteSection" class="hidden"><div id="siteEditor"></div></section>
 
   <!-- Painel -->
   <section id="panel" class="hidden">
@@ -482,5 +541,6 @@
 <div class="toast" id="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js" defer></script>
 <script src="admin.js"></script>
+<script src="site-editor.js"></script>
 </body>
 </html>
