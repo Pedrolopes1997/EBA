@@ -1,0 +1,59 @@
+#!/bin/bash
+# Atualizador automático do portal EBA Cuiabá Sul — instalado pela WeCare Consultoria (instalar-atualizador.sh).
+# Roda a cada 5 minutos (eba-atualizar.timer). Regras:
+#  - só aplica versão ASSINADA pela WeCare (chave em /etc/eba/assinatura-wecare);
+#  - nunca volta para uma versão mais antiga que a instalada;
+#  - depois de aplicar, confere se o site respondeu; se não respondeu, volta sozinho para a versão anterior.
+# Registro: journalctl -t eba-atualizar
+set -uo pipefail
+CONF=${EBA_ATUALIZADOR_CONF:-/etc/eba/atualizador.conf}
+[ -f "$CONF" ] && . "$CONF"
+DIR=${EBA_DIR:-/opt/eba/eba-cuiaba-sul}
+APP_USER=${EBA_USER:-eba}
+SERVICE=${EBA_SERVICE:-eba}
+REPO=${EBA_REPO:-https://github.com/Pedrolopes1997/EBA.git}
+SIGNERS=${EBA_SIGNERS:-/etc/eba/assinatura-wecare}
+LOCK=${EBA_LOCK:-/run/eba-atualizar.lock}
+recusar() { log "$1"; mkdir -p "$(dirname "$FALHOU")" && echo "$NEW" >> "$FALHOU"; exit 0; }
+FALHOU=${EBA_FALHOU:-/var/lib/eba-atualizar/falhou}   # versões que não subiram: não tenta de novo
+
+log() { echo "$*"; logger -t eba-atualizar -- "$*" 2>/dev/null || true; }
+g() { runuser -u "$APP_USER" -- env GIT_TERMINAL_PROMPT=0 git -C "$DIR" "$@"; }
+
+# uma execução por vez
+exec 9>"$LOCK" || exit 0
+flock -n 9 || exit 0
+
+g fetch -q "$REPO" main 2>/dev/null || { log "sem acesso ao GitHub agora; tenta de novo na próxima rodada"; exit 0; }
+NEW=$(g rev-parse FETCH_HEAD) && CUR=$(g rev-parse HEAD) || exit 0
+[ "$NEW" = "$CUR" ] && exit 0
+grep -qx "$NEW" "$FALHOU" 2>/dev/null && exit 0   # já falhou antes: espera uma versão corrigida
+
+if ! g -c gpg.ssh.allowedSignersFile="$SIGNERS" verify-commit "$NEW" >/dev/null 2>&1; then
+  recusar "versão ${NEW:0:7} sem assinatura válida da WeCare: ignorada"
+fi
+if ! g merge-base --is-ancestor "$CUR" "$NEW" 2>/dev/null; then
+  recusar "versão ${NEW:0:7} não é mais nova que a instalada (${CUR:0:7}): ignorada"
+fi
+
+# endereço local do portal (do .env)
+envval() { grep -E "^$1=" "$DIR/.env" 2>/dev/null | tail -1 | cut -d= -f2- | tr -d '"\r '; }
+PORT=$(envval PORT); PORT=${PORT:-3006}
+HOST=$(envval HOST); [ -z "$HOST" ] || [ "$HOST" = "0.0.0.0" ] && HOST=127.0.0.1
+
+log "atualizando ${CUR:0:7} → ${NEW:0:7}"
+g reset -q --hard "$NEW" && systemctl restart "$SERVICE"
+for _ in $(seq 1 15); do
+  sleep 2
+  if curl -fs -o /dev/null --max-time 5 "http://$HOST:$PORT/"; then log "versão ${NEW:0:7} no ar"; exit 0; fi
+done
+
+log "o site não respondeu na versão ${NEW:0:7}: voltando para ${CUR:0:7} (essa versão não será tentada de novo)"
+mkdir -p "$(dirname "$FALHOU")" && echo "$NEW" >> "$FALHOU"
+g reset -q --hard "$CUR" && systemctl restart "$SERVICE"
+for _ in $(seq 1 15); do
+  sleep 2
+  if curl -fs -o /dev/null --max-time 5 "http://$HOST:$PORT/"; then log "versão anterior ${CUR:0:7} de volta no ar"; exit 1; fi
+done
+log "ATENÇÃO: o site também não respondeu na versão anterior ${CUR:0:7} — verificar o servidor"
+exit 2

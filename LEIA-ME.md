@@ -23,7 +23,7 @@ git clone https://github.com/Pedrolopes1997/EBA.git eba-cuiaba-sul
 cd eba-cuiaba-sul
 ```
 
-Versão nova do pacote: `git pull` dentro da pasta e reinicie o serviço.
+Versões novas: depois de instalar o **atualizador automático** (passo 7), elas entram sozinhas.
 
 Não precisa rodar `npm install`: tudo já vem dentro do pacote.
 
@@ -90,6 +90,19 @@ sudo certbot --nginx -d eba.seudominio.com.br
 ## 6. Pronto — avise a WeCare Consultoria
 
 Quando `https://SEU_DOMINIO/` abrir, avise a WeCare Consultoria. O **primeiro acesso ao painel** (`/admin`) é feito pelo responsável do sistema; se você precisar de acesso (por exemplo, para a portaria no dia do evento), ele cria a sua conta.
+
+## 7. Atualizador automático (uma vez só)
+
+Com o portal já funcionando, rode **uma única vez**:
+
+```bash
+sudo bash /opt/eba/eba-cuiaba-sul/instalar-atualizador.sh
+```
+
+A partir daí o servidor procura versão nova a cada 5 minutos e aplica sozinho. Ele só aceita versões **assinadas pela WeCare Consultoria**, nunca volta para uma versão mais antiga e, se o site não responder depois de atualizar, volta sozinho para a versão anterior.
+
+- Ver o que ele fez: `journalctl -t eba-atualizar`
+- Desligar: `sudo systemctl disable --now eba-atualizar.timer`
 
 ## Problemas comuns
 
