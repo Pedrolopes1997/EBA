@@ -336,7 +336,7 @@
       <button class="tab" data-tab="portariaSection">PORTARIA</button>
       <button class="tab" data-tab="usersSection">USUÁRIOS</button>
       <button class="tab" data-tab="siteSection">SITE</button>
-      <button class="tab" data-tab="emailSection">E-MAIL</button>
+      <button class="tab" data-tab="emailSection">INTEGRAÇÕES</button>
     </nav>
     <div class="who">
       <span id="whoName"></span> <span class="role-badge" id="whoRole"></span>
@@ -401,6 +401,13 @@
         </div>
       </form>
       <p id="emMsg" class="em-msg"></p>
+    </div>
+    <div class="em-box" style="margin-top:18px">
+      <h3>CONTROLE DO EVENTO</h3>
+      <p class="hint" style="color:#8a8a8a;font-size:13px;line-height:1.5;margin:0 0 14px">O controle administrativo do evento busca aqui, a cada 10 minutos, só os números das vendas (pagos, pendentes e pessoas por tipo de ingresso). Nenhum nome, telefone ou e-mail sai deste site.</p>
+      <div id="intStatus" class="em-status"></div>
+      <div class="em-actions"><button class="btn" type="button" id="intGerar">GERAR CHAVE</button><button class="btn-line hidden" type="button" id="intDesligar">Desligar integração</button></div>
+      <p id="intMsg" class="em-msg"></p>
     </div>
   </section>
 
@@ -546,10 +553,10 @@
 <!-- Senha temporária (mostrada uma única vez) -->
 <div class="modal-overlay hidden" id="tempPwModal">
   <div class="modal">
-    <h3>SENHA TEMPORÁRIA</h3>
+    <h3 id="tempPwTitle">SENHA TEMPORÁRIA</h3>
     <p id="tempPwWho"></p>
     <div class="temp-pw" id="tempPwValue"></div>
-    <p style="font-size:13px">Anote ou copie agora: ela <b>não aparece de novo</b>. No primeiro acesso a pessoa cria a própria senha.</p>
+    <p style="font-size:13px" id="tempPwNote">Anote ou copie agora: ela <b>não aparece de novo</b>. No primeiro acesso a pessoa cria a própria senha.</p>
     <div class="modal-actions">
       <button class="ghost" id="tempPwCopy">COPIAR</button>
       <button class="btn" id="tempPwClose">OK, ANOTEI</button>
